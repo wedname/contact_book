@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact book</title>
+</head>
+<body>
+    <p>{{ user }}</p>
+
+    <a href="/add_contact">Add contact</a>
+    <a href="/logout">Logout</a>
+
+    {% for contact in contacts %}
+    <p>{{ contact.name }}</p>
+    <p>{{ contact.phone }}</p>
+    <p>{{ contact.email }}</p>
+    <p>{{ contact.group }}</p>
+    <p>{{ contact.address }}</p>
+    <p>{{ contact.birthday }}</p>
+    <p>{{ contact.note }}</p><br><br>
+    {% endfor %}
+</body>
+</html>
