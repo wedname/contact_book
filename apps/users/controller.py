@@ -1,5 +1,4 @@
-import flask
-from flask import render_template, request, redirect, flash, url_for
+from flask import render_template, request, redirect, flash
 from flask_login import login_user, login_required, logout_user, current_user
 
 from config import app
@@ -13,6 +12,9 @@ class UsersController:
         @app.route('/login', methods=['GET', 'POST'])
         def login():
             if request.method == 'GET':
+                if current_user.is_authenticated:
+                    return redirect('/contacts')
+                # print(current_user)
                 return render_template('login.html')
 
             if request.method == 'POST':

@@ -10,6 +10,12 @@
     <a href="/add_contact">Add contact</a>
     <a href="/logout">Logout</a>
 
+    <form action="{{ url_for('search_contacts') }}" method="GET">
+        <label for="query"></label>
+        <input type="text" name="query">
+        <button type="submit">Search</button>
+    </form>
+
     {% for contact in contacts %}
     <p>{{ contact.name }}</p>
     <p>{{ contact.phone }}</p>
@@ -17,7 +23,9 @@
     <p>{{ contact.group }}</p>
     <p>{{ contact.address }}</p>
     <p>{{ contact.birthday }}</p>
-    <p>{{ contact.note }}</p><br><br>
+    <p>{{ contact.note }}</p>
+    <a href="/delete_contact/{{ contact.id }}">Delete_contact</a>
+    <br><br>
     {% endfor %}
 </body>
 </html>
