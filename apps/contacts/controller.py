@@ -14,7 +14,11 @@ class ContactsController:
         def contacts():
             if request.method == 'GET':
                 return render_template('contacts.html', user=current_user.name,
-                                       contacts=Contacts.query.filter_by(users_id=current_user.get_id()))
+                                       contacts=Contacts.query.order_by(Contacts.name.asc()).filter_by(
+                                           users_id=current_user.get_id()),
+                                       groups=Contacts.query.order_by(Contacts.group.asc()).filter_by(
+                                           users_id=current_user.get_id())
+                                       )
 
         @app.route('/add_contact', methods=['GET', 'POST'])
         @login_required
@@ -64,6 +68,6 @@ class ContactsController:
             result = Contacts.query.filter(Contacts.name.like(search)).filter_by(users_id=current_user.get_id()).all()
             return render_template('contacts.html', user=current_user.name, contacts=result)
 
-        # TODO: сортировка по asc и desc
         # TODO: сортировка по группам
+
         # TODO: Реализовать добавление фото
