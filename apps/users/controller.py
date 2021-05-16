@@ -14,7 +14,6 @@ class UsersController:
             if request.method == 'GET':
                 if current_user.is_authenticated:
                     return redirect('/contacts')
-                # print(current_user)
                 return render_template('login.html')
 
             if request.method == 'POST':
@@ -65,7 +64,3 @@ class UsersController:
             if response.status_code == 401:
                 return redirect('/login' + '?next=' + request.url)
             return response
-
-        # @login_manager.user_loader
-        # def load_user(user_id):
-        #     return Users.get(user_id)

@@ -13,12 +13,13 @@ class ContactsController:
         @login_required
         def contacts():
             if request.method == 'GET':
-                return render_template('contacts.html', user=current_user.name,
-                                       contacts=Contacts.query.order_by(Contacts.name.asc()).filter_by(
-                                           users_id=current_user.get_id()),
-                                       groups=Contacts.query.order_by(Contacts.group.asc()).filter_by(
-                                           users_id=current_user.get_id())
-                                       )
+                all_users_contacts = Contacts.query.order_by(Contacts.name.asc()).filter_by(
+                    users_id=current_user.get_id())
+                groups = Contacts.query.order_by(Contacts.group.asc()).filter_by(
+                    users_id=current_user.get_id())
+
+                return render_template('contacts.html', user=current_user.name, contacts=all_users_contacts,
+                                       groups=groups)
 
         @app.route('/add_contact', methods=['GET', 'POST'])
         @login_required
@@ -48,7 +49,6 @@ class ContactsController:
         @app.route('/edit_contact/<int:id>', methods=['GET', 'POST'])
         @login_required
         def edit_contact(id: int):
-
             contact = Contacts.query.filter_by(id=id).first()
             if request.method == 'GET':
                 if int(current_user.get_id()) == contact.users_id:
@@ -63,11 +63,42 @@ class ContactsController:
         @app.route('/search_contacts/')
         @login_required
         def search_contacts():
+            groups = Contacts.query.order_by(Contacts.group.asc()).filter_by(
+                users_id=current_user.get_id())
             query = request.args.get('query')
             search = "%{}%".format(query)
             result = Contacts.query.filter(Contacts.name.like(search)).filter_by(users_id=current_user.get_id()).all()
-            return render_template('contacts.html', user=current_user.name, contacts=result)
+            return render_template('contacts.html', user=current_user.name, contacts=result, groups=groups)
 
-        # TODO: сортировка по группам
+        @app.route('/contacts/sort_by_name/<name>')
+        @login_required
+        def sort_by_name(name):
+            groups = Contacts.query.order_by(Contacts.group.asc()).filter_by(
+                users_id=current_user.get_id())
+            if name == 'asc':
+                result = Contacts.query.order_by(Contacts.name.asc()).filter_by(users_id=current_user.get_id()).all()
+                return render_template('contacts.html', user=current_user.name, contacts=result, groups=groups)
+            elif name == 'desc':
+                result = Contacts.query.order_by(Contacts.name.desc()).filter_by(users_id=current_user.get_id()).all()
+                return render_template('contacts.html', user=current_user.name, contacts=result, groups=groups)
 
-        # TODO: Реализовать добавление фото
+        @app.route('/contacts/<group>')
+        @login_required
+        def sort_by_group(group: str):
+            groups = Contacts.query.order_by(Contacts.group.asc()).filter_by(
+                users_id=current_user.get_id())
+            if group == 'all':
+                all_users_contacts = Contacts.query.order_by(Contacts.name.asc()).filter_by(
+                    users_id=current_user.get_id())
+                return render_template('contacts.html', user=current_user.name, contacts=all_users_contacts,
+                                       groups=groups)
+
+            result = Contacts.query.order_by(Contacts.name.asc()).filter_by(group=group,
+                                                                            users_id=current_user.get_id()).all()
+            return render_template('contacts.html', user=current_user.name, contacts=result, groups=groups)
+
+        # TODO:
+        #  Реализовать добавление фото
+        #  Рефакторинг contacts/controller и user/controller
+        #  Вынести роуты в отдельный файл
+        #  Начать делать верстку
